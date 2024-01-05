@@ -1,0 +1,90 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Nicelizhi\Admin\Http\Controllers\Sales\InvoiceController;
+use Nicelizhi\Admin\Http\Controllers\Sales\OrderController;
+use Nicelizhi\Admin\Http\Controllers\Sales\RefundController;
+use Nicelizhi\Admin\Http\Controllers\Sales\ShipmentController;
+use Nicelizhi\Admin\Http\Controllers\Sales\TransactionController;
+
+/**
+ * Sales routes.
+ */
+Route::group(['middleware' => ['admin'], 'prefix' => config('admin.admin_url')], function () {
+    Route::prefix('sales')->group(function () {
+        /**
+         * Invoices routes.
+         */
+        Route::controller(InvoiceController::class)->prefix('invoices')->group(function () {
+            Route::get('', 'index')->name('admin.sales.invoices.index');
+
+            Route::get('create/{order_id}', 'create')->name('admin.sales.invoices.create');
+
+            Route::post('create/{order_id}', 'store')->name('admin.sales.invoices.store');
+
+            Route::get('view/{id}', 'view')->name('admin.sales.invoices.view');
+
+            Route::post('send-duplicate/{id}', 'sendDuplicate')->name('admin.sales.invoices.send_duplicate');
+
+            Route::get('print/{id}', 'printInvoice')->name('admin.sales.invoices.print');
+
+            Route::get('{id}transactions', 'invoiceTransactions')->name('admin.sales.invoices.transactions');
+        });
+
+        /**
+         * Orders routes.
+         */
+        Route::controller(OrderController::class)->prefix('orders')->group(function () {
+            Route::get('', 'index')->name('admin.sales.orders.index');
+
+            Route::get('view/{id}', 'view')->name('admin.sales.orders.view');
+
+            Route::post('cancel/{id}', 'cancel')->name('admin.sales.orders.cancel');
+
+            Route::post('create/{order_id}', 'comment')->name('admin.sales.orders.comment');
+
+            Route::get('search', 'search')->name('admin.sales.orders.search');
+        });
+
+        /**
+         * Refunds routes.
+         */
+        Route::controller(RefundController::class)->prefix('refunds')->group(function () {
+            Route::get('', 'index')->name('admin.sales.refunds.index');
+
+            Route::get('create/{order_id}', 'create')->name('admin.sales.refunds.create');
+
+            Route::post('create/{order_id}', 'store')->name('admin.sales.refunds.store');
+
+            Route::post('update-qty/{order_id}', 'updateQty')->name('admin.sales.refunds.update_qty');
+
+            Route::get('view/{id}', 'view')->name('admin.sales.refunds.view');
+        });
+
+        /**
+         * Shipments routes.
+         */
+        Route::controller(ShipmentController::class)->prefix('shipments')->group(function () {
+            Route::get('', 'index')->name('admin.sales.shipments.index');
+
+            Route::get('create/{order_id}', 'create')->name('admin.sales.shipments.create');
+
+            Route::post('create/{order_id}', 'store')->name('admin.sales.shipments.store');
+
+            Route::get('view/{id}', 'view')->name('admin.sales.shipments.view');
+        });
+
+        /**
+         * Transactions routes.
+         */
+        Route::controller(TransactionController::class)->prefix('transactions')->group(function () {
+            Route::get('', 'index')->name('admin.sales.transactions.index');
+
+            Route::get('create', 'create')->name('admin.sales.transactions.create');
+
+            Route::post('create', 'store')->name('admin.sales.transactions.store');
+
+            Route::get('view/{id}', 'view')->name('admin.sales.transactions.view');
+        });
+    });
+});
